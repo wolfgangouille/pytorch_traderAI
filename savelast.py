@@ -1,0 +1,7 @@
+torch.save(ag1,'RESULTS/ag1_'+str(simid)+'.pt')
+torch.save(Rtrain,'RESULTS/Rtrain_'+str(simid)+'.pt')
+torch.save(Rval,'RESULTS/Rval_'+str(simid)+'.pt')
+torch.save(L,'RESULTS/L_'+str(simid)+'.pt')
+torch.save(ys,'RESULTS/ys_'+str(simid)+'.pt')
+torch.save(yval,'RESULTS/yval_'+str(simid)+'.pt')
+torch.save(time,'RESULTS/time_'+str(simid)+'.pt')
