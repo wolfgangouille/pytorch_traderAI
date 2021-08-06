@@ -7,20 +7,26 @@ import random
 import matplotlib
 import matplotlib.pyplot as plt
 import math
+seed=13
+
+# Torch RNG
+torch.manual_seed(seed)
+torch.cuda.manual_seed(seed)
+torch.cuda.manual_seed_all(seed)
+# Python RNG
+#np.random.seed(seed)
+random.seed(seed)
+
+torch.backends.cudnn.enabled=False
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 exec(open('init_functions.py').read())
+
 simid=27;
 
-#data
 
-duration=10000;
-Ilength=20;
-ts=torch.arange((duration+Ilength-1));
-amplitude=2;
-ys=(amplitude*(torch.cos(ts/4)+torch.cos(ts/2)+torch.cos(ts/10)))+100;#+torch.randn((ts.size()))*amplitude/10;
-yval=ys
-
-exec(open('fakedata.py').read())
-ley=ys;
+exec(open('load_data.py').read())
+ley=ytrain;
 
 class RNN(nn.Module):
     def __init__(self,la_inputsize,la_hiddensize,la_outputsize):
@@ -29,9 +35,9 @@ class RNN(nn.Module):
         self.hiddensize=la_hiddensize
         self.outputsize=la_outputsize
         self.gru1 = nn.GRU(input_size=la_inputsize, hidden_size=la_hiddensize, num_layers=1,dropout=0)
-        self.mask1=torch.ones(1,1,la_hiddensize)
+        self.mask1=torch.ones(1,1,la_hiddensize,device=device)
         self.fc4 = nn.Linear(la_hiddensize, la_hiddensize, True)
-        self.mask2=torch.ones(1,1,la_hiddensize)
+        self.mask2=torch.ones(1,1,la_hiddensize,device=device)
         self.fc5 = nn.Linear(la_hiddensize, la_outputsize, True)
         self.do=0.5;
     def forward(self, x, h):
@@ -48,6 +54,9 @@ class RNN(nn.Module):
         if self.training==False:
             self.mask1=torch.ones(1,1,self.hiddensize)*(1-self.do)
             self.mask2=torch.ones(1,1,self.hiddensize)*(1-self.do)
+        self.mask1=self.mask1.float().to(device)
+        self.mask2=self.mask2.float().to(device)
+
     def reduce_weights(self):
         sd = self.state_dict()
         for a in sd:
@@ -250,11 +259,14 @@ Rs=[];
 score=0;
 bestscore=0;
 
+ag1.NNp.to(device)
+ag1.NN.to(device)
+ag1.NNbest.to(device)
 
-exec(open('onerun3.py').read())
-exec(open('makebatch3.py').read())
-exec(open('onerun3.py').read())
-exec(open('makebatch3.py').read())
+#exec(open('onerun3.py').read())
+#exec(open('makebatch3.py').read())
+#exec(open('onerun3.py').read())
+#exec(open('makebatch3.py').read())
 exec(open('onerun3.py').read())
 exec(open('makebatch3.py').read())
 exec(open('plotpolicy.py').read())
@@ -279,24 +291,30 @@ bestscore=0;
 #    ag1.updateNN()
 
 #exec(open('loadlast.py').read())
+
 ag1.NNp.do=0.0
 ag1.NN.do=0.0
+ag1.NNp.to(device)
+ag1.NN.to(device)
+ag1.NNbest.to(device)
 
 
 while time<100000:
     if time%100==0:
-        plt.clf(),plt.imshow(params[4][1],vmin=-3,vmax=3),plt.savefig('RESULTS/weights/nfoo'+str(time)+'.png')
-        plt.clf(),plt.imshow(params[1][1],vmin=-3,vmax=3),plt.savefig('RESULTS/weights/nfif'+str(time)+'.png')
+        #plt.clf(),plt.imshow(params[4][1].to("cpu"),vmin=-3,vmax=3),plt.savefig('RESULTS/weights/nfoo'+str(time)+'.png')
+        #plt.clf(),plt.imshow(params[1][1].to("cpu"),vmin=-3,vmax=3),plt.savefig('RESULTS/weights/nfif'+str(time)+'.png')
         exec(open('savelast.py').read())
     if time%10==0:
         ag1.updateNN()
-        ley=ys;
+    if time%10==0:
+        ag1.updateNN()
+        ley=ytrain;
         exec(open('plotpolicy.py').read())
         scoretrain=score
         ley=yval;
         exec(open('plotpolicy.py').read())
         scoreval=score
-        ley=ys;
+        ley=ytrain;
     if time%10==0:
         exec(open('onerun3.py').read())
     exec(open('makebatch3.py').read())

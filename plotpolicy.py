@@ -19,14 +19,12 @@ ag1.record_on=0;
 ag1.position=-1;
 ag1.lasth=torch.zeros(1,1,ag1.nhidden)
 ag1.lastinput=torch.zeros_like(ag1.lastinput)
-ag1.previous_inputs=torch.zeros_like(ag1.previous_inputs)+ys[0]
+ag1.previous_inputs=torch.zeros_like(ag1.previous_inputs)+ley[0]
 ag1.lastinput[0,0,0]=-1
-
+duration = ley.__len__();
 for k in range(duration):
-    #ag1.play(ys[k:k+Ilength].view(1,Ilength))
-
-
-    #ag1.forceplay(ys[k].view(1,1),lesa[k])
+    ag1.lasth=ag1.lasth.to(device)
+    ag1.lastinput=ag1.lastinput.to(device)
     ag1.choose_a()
     prices.append(ag1.last_price)
 
@@ -40,10 +38,10 @@ for k in range(duration):
     lesr2.append(ag1.lastr)
     lesv2.append(ag1.value)
     times.append(k)
-    if ag1.lasta==0:
+    if ag1.lasta==0: #buy
         colors.append('r')
         sizes.append(30)
-    if ag1.lasta==1:
+    if ag1.lasta==1: #sell
         colors.append('g')
         sizes.append(30)
     if ag1.lasta==2:
@@ -58,11 +56,8 @@ for i in range(lesr2.__len__()-nfutur-1):
         lesR[i]+=(ag1.gamma**t)*lesr2[i+t][0][0]
 
 
-
-
 ag1.epsilon=olde
 ag1.record_on=1;
-
 
 score=ag1.meanreward*100
 
@@ -79,17 +74,16 @@ plt.show(block=False)
 plt.xlim([300, 700])
 plt.ylim([-0.15, 0.25])
 plt.pause(0.01)
+#plt.savefig('RESULTS/strategies/foo'+str(time)+'.png')
 
 
-prices=torch.tensor(prices)
+'''
+
 plt.clf()
 #plt.scatter(times,prices,s=sizes,color=colors )
 plt.plot(times,prices,'k',linewidth=1)
+prices=torch.tensor(prices)
 plt.scatter(times,prices,s=sizes,color=colors )
 plt.show(block=False)
-plt.xlim([0, 1000])
-
-#plt.xlim([0, 500])
-#plt.ylim([torch.min(prices[0:500]), torch.max(prices[0:500])])
+#plt.xlim([0, 1000])
 plt.pause(0.01)
-'''

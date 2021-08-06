@@ -16,31 +16,27 @@ ag1.iterations=0;
 ag1.record_on=0;
 ag1.lasth=torch.zeros(1,1,ag1.nhidden)
 ag1.lastinput=torch.zeros_like(ag1.lastinput)
-ag1.lastinput[0,0,0]=-1
+ag1.lastinput[0,0,0]=-1 #no crypto
 
-ag1.previous_inputs=torch.zeros_like(ag1.previous_inputs)+ys[0,:]
+ag1.previous_inputs=torch.zeros_like(ag1.previous_inputs)+ley[0,:]
 
 ag1.position=-1
 
-#ag1.epsilon=0.1
+duration = ley.__len__();
 
-#ag1.updateNN()
-
-
-duration=ys.__len__()-Ilength-1
-
-#duration=100
 
 for t in range(duration):
-    #ag1.play(ys[k:k+Ilength].view(1,Ilength))
 
-    lesh[t,0,:]=ag1.lasth.clone().detach();
-    lesi[t,0,:]=ag1.lastinput.clone().detach(); #get state before playing
+    lesh[t,0,:]=ag1.lasth.clone().detach()
+    lesi[t,0,:]=ag1.lastinput.clone().detach()
+
+    ag1.lasth=ag1.lasth.to(device)
+    ag1.lastinput=ag1.lastinput.to(device)
 
     ag1.choose_a()
 
     lesa.append(ag1.lasta.squeeze(0).squeeze(0))
-    ag1.compute_reward_and_new_state(ys[t,:].view(1,ag1.ninput)) #feed new data
+    ag1.compute_reward_and_new_state(ley[t,:].view(1,ag1.ninput)) #feed new data
     lesr.append(ag1.lastr.squeeze(0).squeeze(0)) #get action and reward
     lesv.append(ag1.value.squeeze(0).squeeze(0))
 
