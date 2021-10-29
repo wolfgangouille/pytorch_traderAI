@@ -4,3 +4,5 @@
 !/price_data/training
 !/price_data/validation
 *.png
+.DS_Store
+.DS_Store
