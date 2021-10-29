@@ -1,3 +1,10 @@
+t0=tm.time();
+device = torch.device("cpu")
+ag1.NN=ag1.NN.to(device)
+ag1.NN.mask2=ag1.NN.mask2.to(device)
+ag1.NN.mask1=ag1.NN.mask1.to(device)
+duration = ley.__len__()-1;
+
 A0=[]
 A1=[]
 A2=[]
@@ -17,16 +24,16 @@ olde=0.1#ag1.epsilon;
 ag1.epsilon=0.00;
 ag1.record_on=0;
 ag1.position=-1;
+ag1.lasta=2;
 ag1.lasth=torch.zeros(1,1,ag1.nhidden)
 ag1.lastinput=torch.zeros_like(ag1.lastinput)
 ag1.previous_inputs=torch.zeros_like(ag1.previous_inputs)+ley[0]
 ag1.lastinput[0,0,0]=-1
-duration = ley.__len__();
-for k in range(duration):
+ag1.last_price=ley[0,:].view(1,ag1.ninput)[0,0]; #initialize with firs time point
+for k in range(1,ley.__len__()):
     ag1.lasth=ag1.lasth.to(device)
     ag1.lastinput=ag1.lastinput.to(device)
     ag1.choose_a()
-    prices.append(ag1.last_price)
 
     A0.append(ag1.lastoutput[0][0][0].detach()) # remove [0]
     A1.append(ag1.lastoutput[0][0][1].detach())
@@ -34,6 +41,7 @@ for k in range(duration):
 
 
     ag1.compute_reward_and_new_state(ley[k,:].view(1,ag1.ninput)) #feed new data and play
+    prices.append(ag1.last_price)
 
     lesr2.append(ag1.lastr)
     lesv2.append(ag1.value)
@@ -87,3 +95,12 @@ plt.scatter(times,prices,s=sizes,color=colors )
 plt.show(block=False)
 #plt.xlim([0, 1000])
 plt.pause(0.01)
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+ag1.NN=ag1.NN.to(device)
+ag1.NN.mask2=ag1.NN.mask2.to(device)
+ag1.NN.mask1=ag1.NN.mask1.to(device)
+
+t1=tm.time();
+
+print('plotpolicy Elapsed time : '+str(t1-t0)+' s.')

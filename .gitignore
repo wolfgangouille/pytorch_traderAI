@@ -1,2 +1,6 @@
-/RESULTS/weights/
+/RESULTS
+/previous_scripts
+/price_data/*
+!/price_data/training
+!/price_data/validation
 *.png
